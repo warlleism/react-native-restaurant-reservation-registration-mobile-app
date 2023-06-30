@@ -1,60 +1,100 @@
 import { useState } from "react";
-import { Image, StyleSheet, TouchableOpacity } from "react-native";
+import { Image, StatusBar, StyleSheet, TouchableOpacity } from "react-native";
 import { Dimensions, SafeAreaView, Text, TextInput, View } from "react-native"
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import User from 'react-native-vector-icons/AntDesign';
 import LinearGradient from 'react-native-linear-gradient';
 
 const { height } = Dimensions.get('window')
 
-const Login = () => {
-
+const SingIng = () => {
     const [showField, setShowField] = useState({
-        email: '',
+        email: "",
+        senha: "",
+        name: "",
+        confirmar: "",
+        nameBool: true,
         emailBool: true,
-        senha: '',
-        senhaBool: true
-    })
+        senhaBool: true,
+        confirmarSenhaBool: true
+    });
 
     const handleFieldFocus = (field: string) => {
         if (field === "email") {
-            setShowField((prevent) => ({
-                ...prevent,
+            setShowField((prev) => ({
+                ...prev,
                 emailBool: false
-            }))
-        } else {
-            setShowField((prevent) => ({
-                ...prevent,
+            }));
+        } else if (field === "senha") {
+            setShowField((prev) => ({
+                ...prev,
                 senhaBool: false
-            }))
+            }));
+        } else if (field === "name") {
+            setShowField((prev) => ({
+                ...prev,
+                nameBool: false
+            }));
+        } else if (field === "confirmarSenha") {
+            setShowField((prev) => ({
+                ...prev,
+                confirmarSenhaBool: false
+            }));
         }
     };
 
     const handleFieldBlur = (field: string) => {
-        if (field === 'email' && showField.email === '') {
-            setShowField((prev) => ({ ...prev, emailBool: true }));
-        } else if (field === 'senha' && showField.senha === '') {
-            setShowField((prev) => ({ ...prev, senhaBool: true }));
+        if (field === "email" && showField.email === "") {
+            setShowField((prev) => ({
+                ...prev,
+                emailBool: true
+            }));
+        } else if (field === "senha" && showField.senha === "") {
+            setShowField((prev) => ({
+                ...prev,
+                senhaBool: true
+            }));
+        } else if (field === "name" && showField.name === "") {
+            setShowField((prev) => ({
+                ...prev,
+                nameBool: true
+            }));
+        } else if (field === "confirmarSenha" && showField.confirmar === "") {
+            setShowField((prev) => ({
+                ...prev,
+                confirmarSenhaBool: true
+            }));
         }
     };
 
     const handleFieldChange = (text: string, field: string) => {
         if (field === "email") {
-            setShowField((prevent) => ({
-                ...prevent,
+            setShowField((prev) => ({
+                ...prev,
                 email: text
-            }))
-        } else {
-            setShowField((prevent) => ({
-                ...prevent,
+            }));
+        } else if (field === "senha") {
+            setShowField((prev) => ({
+                ...prev,
                 senha: text
-            }))
+            }));
+        } else if (field === "name") {
+            setShowField((prev) => ({
+                ...prev,
+                name: text
+            }));
+        } else if (field === "confirmarSenha") {
+            setShowField((prev) => ({
+                ...prev,
+                confirmar: text
+            }));
         }
     };
 
 
-
     return (
         <SafeAreaView style={styles.safeAreaView}>
+
             <Image
                 source={require('../../../assets/blob1.png')}
                 style={{
@@ -72,11 +112,28 @@ const Login = () => {
                 }} />
             <View style={styles.container}>
                 <View>
-                    <Text style={styles.loginText}>Login</Text>
-                    <Text style={styles.loginSubtitle}>Faça login para continuar.</Text>
+                    <Text style={styles.loginText}>Criar Conta</Text>
                 </View>
 
                 <View>
+                    <View style={styles.inputContainer}>
+                        <Text style={styles.inputLabel}>Nome</Text>
+                        <View style={styles.inputWrapper}>
+                            <User name="user" size={20} color="#373737" />
+                            {showField.nameBool && (
+                                <Text style={styles.placeholderText}>Gabriela Oliveira</Text>
+                            )}
+                            <TextInput
+                                placeholderTextColor="#373737"
+                                style={styles.textInput}
+                                onFocus={() => handleFieldFocus('name')}
+                                onBlur={() => handleFieldBlur('name')}
+                                onChangeText={(e) => handleFieldChange(e, 'name')}
+                                value={showField.name}
+                            />
+                        </View>
+                    </View>
+
                     <View style={styles.inputContainer}>
                         <Text style={styles.inputLabel}>Email</Text>
                         <View style={styles.inputWrapper}>
@@ -96,7 +153,9 @@ const Login = () => {
                     </View>
 
                     <View>
-                        <View style={styles.passwordContainer}>
+                        <View style={styles.inputContainer}>
+                            <Text style={styles.inputLabel}>Senha</Text>
+
                             <View style={styles.inputWrapper}>
                                 <Icon name="lock-outline" size={20} color="#373737" />
                                 {showField.senhaBool && (
@@ -105,16 +164,30 @@ const Login = () => {
                                 <TextInput
                                     placeholderTextColor="#000"
                                     style={styles.textInput}
+                                    secureTextEntry={true}
                                     onFocus={() => handleFieldFocus('senha')}
                                     onBlur={() => handleFieldBlur('senha')}
                                     onChangeText={(e) => handleFieldChange(e, 'senha')}
                                     value={showField.senha}
                                 />
                             </View>
+
+                            <View style={[styles.inputWrapper, { marginTop: 10 }]}>
+                                <Icon name="lock-outline" size={20} color="#373737" />
+                                {showField.confirmarSenhaBool && (
+                                    <Text style={[styles.placeholderText, { bottom: 12 }]}>confirmar senha</Text>
+                                )}
+                                <TextInput
+                                    placeholderTextColor="#000"
+                                    style={styles.textInput}
+                                    secureTextEntry={true}
+                                    onFocus={() => handleFieldFocus('confirmarSenha')}
+                                    onBlur={() => handleFieldBlur('confirmarSenha')}
+                                    onChangeText={(e) => handleFieldChange(e, 'confirmarSenha')}
+                                    value={showField.confirmar}
+                                />
+                            </View>
                         </View>
-                        <TouchableOpacity style={{ alignSelf: "flex-end", marginTop: 10 }}>
-                            <Text>Esqueceu sua senha?</Text>
-                        </TouchableOpacity>
                     </View>
 
                     <LinearGradient
@@ -124,28 +197,22 @@ const Login = () => {
                         style={styles.loginButton}
                     >
                         <TouchableOpacity style={styles.loginButton}>
-                            <Text style={styles.loginButtonText}>LOGIN</Text>
+                            <Text style={styles.loginButtonText}>Cadastrar</Text>
                             <Icon name="arrow-right" size={25} color="#fff" />
                         </TouchableOpacity>
                     </LinearGradient>
                 </View>
             </View>
 
-            <View style={styles.signupContainer}>
-                <Text style={{ color: "#2b2b2b" }}>não tem uma conta?</Text>
-                <TouchableOpacity>
-                    <Text style={styles.signupLink}> Cadastre-se</Text>
-                </TouchableOpacity>
-            </View>
         </SafeAreaView>
     )
 }
 
 const styles = StyleSheet.create({
     safeAreaView: {
-        height: height,
+        height: "100%",
         paddingHorizontal: 40,
-        backgroundColor: "#f9f6ee30",
+        backgroundColor: "#FAF8F6",
         justifyContent: "center"
     },
     container: {
@@ -164,6 +231,8 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
     inputContainer: {
+        borderWidth: 2,
+        borderColor: "#000",
         flexDirection: "column",
         backgroundColor: '#fff',
         justifyContent: "space-around",
@@ -174,6 +243,7 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     inputLabel: {
+        color: "#000",
         fontSize: 12,
         marginLeft: 20,
         marginTop: 10,
@@ -193,16 +263,8 @@ const styles = StyleSheet.create({
         pointerEvents: "none"
     },
     textInput: {
+        color: "#000",
         width: "90%"
-    },
-    passwordContainer: {
-        flexDirection: "column",
-        backgroundColor: '#fff',
-        justifyContent: "space-around",
-        borderRadius: 10,
-        elevation: 4,
-        marginTop: 20,
-        paddingHorizontal: 10
     },
     loginButton: {
         flexDirection: "row",
@@ -233,4 +295,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Login;
+export default SingIng;
