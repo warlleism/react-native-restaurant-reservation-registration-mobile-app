@@ -1,9 +1,12 @@
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { Image, ScrollView, Text, TextInput, TouchableOpacity, View, StyleSheet } from 'react-native';
 import Search from 'react-native-vector-icons/AntDesign';
 import Drink from 'react-native-vector-icons/Entypo';
 
 function Home() {
+
+  const navigation = useNavigation();
 
   const data = [
     {
@@ -61,6 +64,7 @@ function Home() {
       </View>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categories}>
+        
         <TouchableOpacity style={styles.categoryButton}>
           <Text style={styles.categoryText}>Gourmet</Text>
         </TouchableOpacity>
@@ -97,7 +101,7 @@ function Home() {
         <View style={styles.restaurantList}>
 
           {data.map(item => (
-            <TouchableOpacity key={item.id} style={styles.restaurantItem}>
+            <TouchableOpacity key={item.id} style={styles.restaurantItem} onPress={() => navigation.navigate("detail" as never)}>
               <Image source={item.image} style={styles.restaurantImage} />
               <Text style={styles.restaurantName}>{item.name}</Text>
             </TouchableOpacity>
@@ -111,6 +115,7 @@ function Home() {
 
 const styles = StyleSheet.create({
   container: {
+    padding: 15,
     backgroundColor: "#FFFFFF",
     height: "100%"
   },

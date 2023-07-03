@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, Image, ScrollView, Text, TouchableOpacity, View, ImageSourcePropType, StyleSheet } from 'react-native';
 import Arrow from 'react-native-vector-icons/AntDesign';
@@ -5,6 +6,8 @@ import Arrow from 'react-native-vector-icons/AntDesign';
 const { height } = Dimensions.get('window');
 
 const Detail = () => {
+  const navigation = useNavigation();
+
   const [centerImg, setCenterImg] = useState<ImageSourcePropType | undefined>(undefined);
 
   const data = [
@@ -23,7 +26,7 @@ const Detail = () => {
   }, []);
 
   return (
-    <View style={{ height: '100%' }}>
+    <View style={{ height: '100%', padding: 15 }}>
       <TouchableOpacity
         style={styles.buttonContainer}
       >
@@ -35,7 +38,7 @@ const Detail = () => {
           return (
             <View key={e.id} style={styles.container}>
               <View style={styles.header}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate("/" as never)}>
                   <Arrow name="arrowleft" size={30} color="#33363F" />
                 </TouchableOpacity>
                 <Text style={styles.title}>{e.name}</Text>
@@ -119,7 +122,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     justifyContent: 'center',
     position: 'absolute',
-    bottom: 0,
+    bottom: 20,
     backgroundColor: '#151515',
     zIndex: 2,
     borderRadius: 30,

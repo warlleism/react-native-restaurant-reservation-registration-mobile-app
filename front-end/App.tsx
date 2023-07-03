@@ -6,15 +6,31 @@
  */
 
 import React from 'react';
-import { View } from 'react-native';
 import Detail from './src/screens/detail';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Home from './src/screens/home/'
 
+function HomeScreen() {
+  return <Home />
+}
+
+function DetailScreen() {
+  return <Detail />
+}
+
+const Stack = createNativeStackNavigator();
 
 function App(): JSX.Element {
+
   return (
-    <View style={{ padding: 15, backgroundColor: "#FFFFFF" }}>
-      <Detail />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="/" component={HomeScreen} />
+        <Stack.Screen name="detail" component={DetailScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+
   )
 }
 
