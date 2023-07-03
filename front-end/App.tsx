@@ -7,13 +7,13 @@
 
 import React from 'react';
 import { View } from 'react-native';
-import Home from './src/screens/home';
+import Detail from './src/screens/detail';
 
 
 function App(): JSX.Element {
   return (
-    <View>
-      <Home />
+    <View style={{ padding: 15, backgroundColor: "#FFFFFF" }}>
+      <Detail />
     </View>
   )
 }

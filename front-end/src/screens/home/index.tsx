@@ -111,7 +111,6 @@ function Home() {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 15,
     backgroundColor: "#FFFFFF",
     height: "100%"
   },
