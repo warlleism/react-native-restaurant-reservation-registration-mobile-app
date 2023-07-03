@@ -95,21 +95,6 @@ const SingIng = () => {
     return (
         <SafeAreaView style={styles.safeAreaView}>
 
-            <Image
-                source={require('../../../assets/blob1.png')}
-                style={{
-                    position: "absolute",
-                    left: 100,
-                    top: height - 940
-                }} />
-
-            <Image
-                source={require('../../../assets/blob1.png')}
-                style={{
-                    position: "absolute",
-                    right: 100,
-                    bottom: height - 1000
-                }} />
             <View style={styles.container}>
                 <View>
                     <Text style={styles.loginText}>Criar Conta</Text>
@@ -231,8 +216,6 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
     inputContainer: {
-        borderWidth: 2,
-        borderColor: "#000",
         flexDirection: "column",
         backgroundColor: '#fff',
         justifyContent: "space-around",

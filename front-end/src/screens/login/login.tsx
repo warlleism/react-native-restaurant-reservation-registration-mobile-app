@@ -54,7 +54,6 @@ const Login = () => {
         }
     };
 
-
     const setAnimation = (value: number) => {
         Animated.timing(
             posicao,
@@ -75,7 +74,7 @@ const Login = () => {
                 top: 0,
                 backgroundColor: "#FAF8F6",
                 height: '100%',
-                transform: [{ translateY: posicao }]
+                transform: [{ translateX: posicao }]
             }}>
                 <TouchableOpacity style={{
                     position: "absolute",
@@ -139,6 +138,7 @@ const Login = () => {
                                         <Text style={[styles.placeholderText, { bottom: 12 }]}>*********</Text>
                                     )}
                                     <TextInput
+                                        secureTextEntry={true}
                                         placeholderTextColor="#000"
                                         style={styles.textInput}
                                         onFocus={() => handleFieldFocus('senha')}
@@ -201,8 +201,6 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
     inputContainer: {
-        borderWidth: 2,
-        borderColor: "#000",
         flexDirection: "column",
         backgroundColor: '#fff',
         justifyContent: "space-around",
