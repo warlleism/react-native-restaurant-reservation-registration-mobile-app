@@ -10,9 +10,13 @@ import Detail from './src/screens/detail';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from './src/screens/home/'
+import Login from './src/screens/login/login';
 
 function HomeScreen() {
   return <Home />
+}
+function LoginScreen() {
+  return <Login />
 }
 
 function DetailScreen() {
@@ -26,7 +30,8 @@ function App(): JSX.Element {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="/" component={HomeScreen} />
+        <Stack.Screen name="/" component={LoginScreen} />
+        <Stack.Screen name="home" component={HomeScreen} />
         <Stack.Screen name="detail" component={DetailScreen} />
       </Stack.Navigator>
     </NavigationContainer>

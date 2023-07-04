@@ -4,12 +4,15 @@ import { Dimensions, SafeAreaView, Text, TextInput, View } from "react-native"
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import LinearGradient from 'react-native-linear-gradient';
 import SingIng from "./sign-in";
+import { useNavigation } from "@react-navigation/native";
 
 const { height } = Dimensions.get('window')
 
 const Login = () => {
 
     const [posicao] = useState(new Animated.Value(3200))
+
+    const navigation = useNavigation();
 
     const [showField, setShowField] = useState({
         email: '',
@@ -78,7 +81,7 @@ const Login = () => {
             }}>
                 <TouchableOpacity style={{
                     position: "absolute",
-                    top: 70,
+                    top: 30,
                     left: 30,
                     zIndex: 3
                 }} onPress={() => setAnimation(3200)}>
@@ -159,7 +162,7 @@ const Login = () => {
                             end={{ x: 1, y: 1 }}
                             style={styles.loginButton}
                         >
-                            <TouchableOpacity style={styles.loginButton}>
+                            <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate("home" as never)}>
                                 <Text style={styles.loginButtonText}>LOGIN</Text>
                                 <Icon name="arrow-right" size={25} color="#fff" />
                             </TouchableOpacity>
@@ -224,7 +227,7 @@ const styles = StyleSheet.create({
     placeholderText: {
         position: "absolute",
         fontWeight: "800",
-        color: "#373737",
+        color: "#00000082",
         left: '9%',
         bottom: '32%',
         pointerEvents: "none"

@@ -99,14 +99,12 @@ function Home() {
         </View>
 
         <View style={styles.restaurantList}>
-
           {data.map(item => (
             <TouchableOpacity key={item.id} style={styles.restaurantItem} onPress={() => navigation.navigate("detail" as never)}>
               <Image source={item.image} style={styles.restaurantImage} />
               <Text style={styles.restaurantName}>{item.name}</Text>
             </TouchableOpacity>
           ))}
-
         </View>
       </View>
     </ScrollView>
@@ -172,13 +170,14 @@ const styles = StyleSheet.create({
     color: "#fff"
   },
   restaurantContainer: {
-    width: '100%'
+    width: '100%',
   },
   restaurantHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     marginBottom: 16,
+
   },
   restaurantHeaderText: {
     color: "#151515",
@@ -188,9 +187,9 @@ const styles = StyleSheet.create({
   },
   viewMoreText: {
     color: "#151515",
-    fontSize: 18,
+    fontSize: 13,
     letterSpacing: -1,
-    fontWeight: "400"
+    fontWeight: "700"
   },
   restaurantList: {
     width: '100%',
@@ -207,7 +206,8 @@ const styles = StyleSheet.create({
   },
   restaurantImage: {
     width: '100%',
-    height: 120
+    height: 120,
+    borderRadius: 5
   },
   restaurantName: {
     color: "#000000",
