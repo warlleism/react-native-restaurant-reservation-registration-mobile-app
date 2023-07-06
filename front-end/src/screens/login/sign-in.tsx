@@ -7,9 +7,20 @@ import LinearGradient from 'react-native-linear-gradient';
 import DocumentPicker from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
 
+interface IForm {
+    email: string,
+    senha: string,
+    name: string,
+    confirmar: string,
+    foto: string,
+    nameBool: boolean,
+    emailBool: boolean,
+    senhaBool: boolean,
+    confirmarSenhaBool: boolean
+}
 const SingIng = () => {
 
-    const [showField, setShowField] = useState({
+    const [showField, setShowField] = useState<IForm>({
         email: "",
         senha: "",
         name: "",
@@ -23,22 +34,22 @@ const SingIng = () => {
 
     const handleFieldFocus = (field: string) => {
         if (field === "email") {
-            setShowField((prev) => ({
+            setShowField((prev: IForm) => ({
                 ...prev,
                 emailBool: false
             }));
         } else if (field === "senha") {
-            setShowField((prev) => ({
+            setShowField((prev: IForm) => ({
                 ...prev,
                 senhaBool: false
             }));
         } else if (field === "name") {
-            setShowField((prev) => ({
+            setShowField((prev: IForm) => ({
                 ...prev,
                 nameBool: false
             }));
         } else if (field === "confirmarSenha") {
-            setShowField((prev) => ({
+            setShowField((prev: IForm) => ({
                 ...prev,
                 confirmarSenhaBool: false
             }));
@@ -47,22 +58,22 @@ const SingIng = () => {
 
     const handleFieldBlur = (field: string) => {
         if (field === "email" && showField.email === "") {
-            setShowField((prev) => ({
+            setShowField((prev: IForm) => ({
                 ...prev,
                 emailBool: true
             }));
         } else if (field === "senha" && showField.senha === "") {
-            setShowField((prev) => ({
+            setShowField((prev: IForm) => ({
                 ...prev,
                 senhaBool: true
             }));
         } else if (field === "name" && showField.name === "") {
-            setShowField((prev) => ({
+            setShowField((prev: IForm) => ({
                 ...prev,
                 nameBool: true
             }));
         } else if (field === "confirmarSenha" && showField.confirmar === "") {
-            setShowField((prev) => ({
+            setShowField((prev: IForm) => ({
                 ...prev,
                 confirmarSenhaBool: true
             }));
@@ -71,22 +82,22 @@ const SingIng = () => {
 
     const handleFieldChange = (text: string, field: string) => {
         if (field === "email") {
-            setShowField((prev) => ({
+            setShowField((prev: IForm) => ({
                 ...prev,
                 email: text
             }));
         } else if (field === "senha") {
-            setShowField((prev) => ({
+            setShowField((prev: IForm) => ({
                 ...prev,
                 senha: text
             }));
         } else if (field === "name") {
-            setShowField((prev) => ({
+            setShowField((prev: IForm) => ({
                 ...prev,
                 name: text
             }));
         } else if (field === "confirmarSenha") {
-            setShowField((prev) => ({
+            setShowField((prev: IForm) => ({
                 ...prev,
                 confirmar: text
             }));
@@ -98,14 +109,14 @@ const SingIng = () => {
             const res = await DocumentPicker.pick({
                 type: [DocumentPicker.types.allFiles],
             });
-            
+
             if (res[0].type?.includes('video')) {
                 console.log('arquivo errado')
                 return
             }
             console.log('Arquivo selecionado:', res[0].type);
             const fileContent = await RNFS.readFile(res[0].uri, 'base64');
-            setShowField((prev) => ({
+            setShowField((prev: IForm) => ({
                 ...prev,
                 foto: fileContent
             }));

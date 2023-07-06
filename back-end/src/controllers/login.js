@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const Login = async (req, res) => {
-  const { email, senha, id } = req.body;
+  const { email, senha } = req.body;
 
   let users = [
     {
@@ -32,8 +32,8 @@ const Login = async (req, res) => {
 
   const senhaAuth = passwordComparisons.some((result) => result === true);
 
-  let token = jwt.sign({ id: id }, "D2DDJSUD726390S8DDSDADWD465G", {
-    expiresIn: 60,
+  let token = jwt.sign({ id: 1 }, "D2DDJSUD726390S8DDSDADWD465G", {
+    expiresIn: 86400, // 24 horas em segundos
   });
 
   if (user && senhaAuth) {
