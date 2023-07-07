@@ -7,7 +7,7 @@ class Reservas extends Model {
             id_mesa: DataTypes.INTEGER,
             id_restaurante: DataTypes.INTEGER,
             data: DataTypes.DATE,
-            hora: DataTypes.DATE,
+            hora: DataTypes.TIME,
             data: DataTypes.STRING,
             quantidade_pessoas: DataTypes.INTEGER,
         }, {

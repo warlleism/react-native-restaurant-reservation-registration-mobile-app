@@ -1,18 +1,10 @@
 const Reservas = require("../model/reservas");
 
 const CreateUser = async (req, res) => {
-  var {
-    id_usuario,
-    id_mesa,
-    id_restaurante,
-    data,
-    hora,
-    data,
-    quantidade_pessoas,
-  } = req.body;
+  var { id_usuario, id_mesa, id_restaurante, data, hora, quantidade_pessoas } =
+    req.body;
 
   try {
-
     const cadastrar = await Reservas.create({
       id_usuario,
       id_mesa,
@@ -29,8 +21,9 @@ const CreateUser = async (req, res) => {
       icon: "success",
     });
   } catch (err) {
-    
-    res.status(400).send({ error: "Algo deu errado! " + err, icon: "error" });
+    res
+      .status(400)
+      .send({ error: "Sinto Muito! Local já reservado", status: 400 });
   }
 };
 
