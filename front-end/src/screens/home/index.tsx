@@ -21,48 +21,112 @@ interface IRestaurante {
   capacidade_maxima_reservas: number;
 }
 
+interface IUser {
+  id: number;
+  nome: string;
+  foto: string;
+  email: string;
+  senha: string;
+}
 
 function Home() {
 
   const navigation = useNavigation();
   const [data, setData] = useState<IRestaurante[]>([])
+  const [user, setUser] = useState<IUser[]>([])
+  const [icon, setIcon] = useState(false)
 
   useEffect(() => {
+
     const fetchData = async () => {
       try {
-        const storedToken = await AsyncStorage.getItem('token');
 
-        if (storedToken) {
+        const response = await axios.get(
+          'http://192.168.1.153:8080/todosRestaurantes'
+        );
+
+        setData(response.data.data)
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    const fetchUser = async () => {
+      try {
+        const storedToken = await AsyncStorage.getItem('dados');
+
+        if (storedToken !== null) {
+          const parsedToken = JSON.parse(storedToken);
+
+          const data = { id: parsedToken.id };
+
           const headers = {
-            Authorization: `Bearer ${storedToken}`,
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${parsedToken.token}`,
           };
 
-          const response = await axios.get(
-            'http://192.168.1.153:8080/todosRestaurantes',
-            { headers }
-          );
+          const response = await axios.post('http://192.168.1.153:8080/umUsuario', data, { headers });
+          if (response.data.data === null) {
+            return setIcon(true)
+          }
 
-          setData(response.data.data)
+          setIcon(false)
+          return setUser(response.data.data);
         }
       } catch (error) {
         console.error(error);
       }
     };
 
+    fetchUser();
     fetchData();
   }, []);
 
 
   return (
     <ScrollView style={styles.container}>
+
+
       <View style={styles.header}>
         <View>
           <Text style={styles.title}>Encontre os Melhores</Text>
           <Text style={[styles.title, { color: "#000" }]}>Restaurantes da sua Cidade</Text>
         </View>
-        <TouchableOpacity>
-          <Image source={require('../../../assets/user.png')} style={styles.profileImage} />
-        </TouchableOpacity>
+        {
+          icon ?
+            <TouchableOpacity
+              onPress={() => navigation.navigate('/' as never)}
+              style={{
+                width: 50,
+                height: 50,
+                borderRadius: 100,
+                borderWidth: 2,
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderColor: "#151515"
+              }}>
+
+              <Search
+                name='user'
+                size={30}
+                color={"#000"}
+              />
+            </TouchableOpacity>
+            :
+            <TouchableOpacity
+              style={{
+                width: 50,
+                height: 50,
+                borderRadius: 100,
+                borderWidth: 2,
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderColor: "#151515"
+              }}>
+              <Image source={{ uri: `data:image/png;base64,${user?.foto}` }} style={styles.profileImage} />
+            </TouchableOpacity>
+
+        }
       </View>
 
       <View style={styles.searchBar}>

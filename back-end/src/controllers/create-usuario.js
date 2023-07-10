@@ -2,7 +2,6 @@ const Usuarios = require("../model/usuarios");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
-
 const CreateUser = async (req, res) => {
   var { nome, foto, email, senha } = req.body;
 
@@ -25,6 +24,7 @@ const CreateUser = async (req, res) => {
       sucess: "Cadastro feito com sucesso!",
       icon: "success",
       token: token,
+      id: cadastrar.id,
     });
   } catch (err) {
     res.status(400).send({ error: "Ocorreu um erro inesperado!", status: 400 });

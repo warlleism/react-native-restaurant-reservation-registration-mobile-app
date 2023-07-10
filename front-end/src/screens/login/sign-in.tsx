@@ -128,7 +128,6 @@ const SingIng = () => {
     };
 
     const onSubmit = (data: any) => {
-        console.log(data)
         setShowField(prev => ({
             ...prev,
             ...data
@@ -205,7 +204,8 @@ const SingIng = () => {
                                             }}
                                             onPress={handleFileSelection}
                                         >
-                                            <Text style={{ fontWeight: '700', fontSize: 20 }}>FOTO</Text>
+                                            <Text style={{ fontWeight: '700', fontSize: 20, color: "#000" }}>FOTO</Text>
+                                            <Text style={{ fontWeight: '700', fontSize: 12, color: "#000" }}>MAX: <Text style={{ color: "#fff" }}>72.06KB</Text></Text>
                                         </TouchableOpacity>
                                         {errors.foto && <Text style={{ textAlign: "center", color: "#000" }}>Precisa ser preenchido.</Text>}
                                     </>

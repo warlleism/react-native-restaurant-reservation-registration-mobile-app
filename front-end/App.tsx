@@ -37,8 +37,8 @@ function App(): JSX.Element {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="/" component={LoginScreen} />
-        <Stack.Screen name="reservas" component={ReservaScreen} />
         <Stack.Screen name="home" component={HomeScreen} />
+        <Stack.Screen name="reservas" component={ReservaScreen} />
         <Stack.Screen name="detail" component={DetailScreen} />
       </Stack.Navigator>
     </NavigationContainer>

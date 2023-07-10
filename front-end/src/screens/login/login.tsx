@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Animated, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { useEffect, useState } from "react";
+import { Alert, Animated, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { Dimensions, SafeAreaView, Text, TextInput, View } from "react-native"
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import LinearGradient from 'react-native-linear-gradient';
@@ -8,6 +8,7 @@ import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useForm, Controller } from 'react-hook-form';
 import axios from 'axios';
+import Fontisto from 'react-native-vector-icons/Fontisto';
 
 const { height } = Dimensions.get('window')
 
@@ -26,6 +27,17 @@ const Login = () => {
         senhaBool: true
     })
 
+    useEffect(() => {
+        async function getLocalData() {
+            const storedToken = await AsyncStorage.getItem('dados');
+            if (storedToken) {
+                navigation.navigate('/' as never)
+            }
+        }
+        getLocalData()
+
+    }, [])
+
     const Login = async () => {
 
         const OptionsRegister = {
@@ -39,16 +51,16 @@ const Login = () => {
         try {
             const response = await axios('http://192.168.1.153:8080/login', OptionsRegister);
             const data = response.data;
-            console.log(data)
             if (response.status === 200) {
-                await AsyncStorage.setItem('token', data.token);
+                await AsyncStorage.setItem('dados', JSON.stringify({ token: data.token, id: data.id }));
                 console.log('Token definido com sucesso!');
                 navigation.navigate('home' as never);
             } else {
                 console.log('Requisição não retornou status 200.');
             }
         } catch (error) {
-            console.log('Erro na requisição:', error, 'Email ou senha incorretos');
+            Alert.alert('Email ou senha incorretos')
+            console.log('Erro na requisição:', error, 'Email ou senha incorreto.');
         }
     };
 
@@ -128,6 +140,29 @@ const Login = () => {
             </Animated.View>
 
             <SafeAreaView style={styles.safeAreaView}>
+
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('home' as never)}
+                    style={{
+                        zIndex: 10,
+                        width: 50,
+                        height: 50,
+                        borderRadius: 100,
+                        position: "absolute",
+                        right: 30,
+                        top: 30,
+                        borderWidth: 3,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        borderColor: "#fff"
+                    }}>
+
+                    <Fontisto
+                        name='shopping-store'
+                        size={23}
+                        color={"#161616"}
+                    />
+                </TouchableOpacity>
 
                 <Image
                     source={require('../../../assets/blob1.png')}
@@ -216,11 +251,12 @@ const Login = () => {
                                     />
                                 </View>
                             </View>
+                            {errors.senha && <Text style={{ color: "#000" }}>Precisa ser preenchido.</Text>}
+
                             <TouchableOpacity style={{ alignSelf: "flex-end", marginTop: 10 }}>
                                 <Text style={{ color: "#161616" }}>Esqueceu sua senha?</Text>
                             </TouchableOpacity>
                         </View>
-                        {errors.senha && <Text style={{ color: "#000" }}>Precisa ser preenchido.</Text>}
 
                         <LinearGradient
                             colors={['#161616', '#333333', '#999999']}

@@ -34,6 +34,7 @@ const Detail = () => {
       </TouchableOpacity>
 
       <ScrollView>
+        <Text>{}</Text>
         {data.map((e) => {
           return (
             <View key={e.id} style={styles.container}>

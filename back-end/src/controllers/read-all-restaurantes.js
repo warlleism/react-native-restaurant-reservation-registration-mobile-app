@@ -3,7 +3,6 @@ const restaurantes = require("../model/restaurantes");
 const ReadAllRestaurantes = async (req, res) => {
 
   try {
-    console.log('teste')
     
     const response = await restaurantes.findAll();
     

@@ -32,7 +32,7 @@ const useCreateUser = (showField: IForm, setShowField: React.Dispatch<React.SetS
       const response = await axios('http://192.168.1.153:8080/cadastrar', OptionsRegister);
       const data = response.data;
       if (response.status === 200) {
-        await AsyncStorage.setItem('token', data.token);
+        await AsyncStorage.setItem('dados', JSON.stringify({ token: data.token, id: data.id }));
         console.log('Token definido com sucesso!');
         setFanily(false)
         navigation.navigate('home' as never);

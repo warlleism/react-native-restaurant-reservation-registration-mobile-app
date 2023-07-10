@@ -3,7 +3,6 @@ const jwt = require("jsonwebtoken");
 const usuarios = require("../model/usuarios");
 
 const Login = async (req, res) => {
-  
   const { email, senha } = req.body;
 
   try {
@@ -26,6 +25,7 @@ const Login = async (req, res) => {
         erro: false,
         mensagem: "login",
         token,
+        id: user.id,
       });
     }
   } catch (error) {
