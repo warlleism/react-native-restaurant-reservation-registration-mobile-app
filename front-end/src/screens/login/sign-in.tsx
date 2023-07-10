@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { Image, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
-import { SafeAreaView, Text, TextInput, View } from "react-native"
+import { SafeAreaView, Text, TextInput, View } from "react-native";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import User from 'react-native-vector-icons/AntDesign';
 import LinearGradient from 'react-native-linear-gradient';
 import DocumentPicker from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
+import { useForm, Controller } from 'react-hook-form';
 import useCreateUser from "../../hooks/createNewUser";
 import { IForm } from "../../interfaces/IForm";
-
+import { ActivityIndicator } from 'react-native';
 
 const SingIng = () => {
 
@@ -17,14 +18,17 @@ const SingIng = () => {
         senha: "",
         nome: "",
         confirmar: "",
-        foto: '',
+        foto: "",
         nameBool: true,
         emailBool: true,
         senhaBool: true,
         confirmarSenhaBool: true
     });
 
-    const { error, createUser } = useCreateUser(showField, setShowField);
+    const [senhasCorretas, setSenhasCorretas] = useState<boolean>(false)
+
+    const { control, handleSubmit, formState: { errors } } = useForm();
+    const { error, createUser, fanily } = useCreateUser(showField, setShowField);
 
     const handleFieldFocus = (field: string) => {
         if (field === "email") {
@@ -105,8 +109,8 @@ const SingIng = () => {
             });
 
             if (res[0].type?.includes('video')) {
-                console.log('arquivo errado')
-                return
+                console.log('arquivo errado');
+                return;
             }
             console.log('Arquivo selecionado:', res[0].type);
             const fileContent = await RNFS.readFile(res[0].uri, 'base64');
@@ -123,56 +127,100 @@ const SingIng = () => {
         }
     };
 
+    const onSubmit = (data: any) => {
+        console.log(data)
+        setShowField(prev => ({
+            ...prev,
+            ...data
+        }));
+
+        if (data.confirmarSenha !== data.senha) {
+            return setSenhasCorretas(true)
+        } else {
+            setSenhasCorretas(false)
+        }
+
+        createUser();
+    };
     return (
         <SafeAreaView style={styles.safeAreaView}>
 
+            {fanily &&
+                <View style={{
+                    backgroundColor: "#0000006b",
+                    zIndex: 11,
+                    position: "absolute",
+                    top: 0,
+                    height: "100%",
+                    justifyContent: "center",
+                    width: "100%",
+                    alignSelf: "center"
+                }}>
+                    <ActivityIndicator size={100} color="#fff" />
+                </View>
+            }
+
             <ScrollView showsVerticalScrollIndicator={false} style={{ paddingHorizontal: 40 }}>
-
                 <View style={styles.container}>
-
                     <View>
                         <Text style={styles.loginText}>Criar Conta</Text>
                     </View>
 
                     <View>
-                        {
-                            showField.foto !== '' ? (
-                                <TouchableOpacity onPress={handleFileSelection} style={{
+                        {showField.foto !== '' ? (
+                            <TouchableOpacity
+                                onPress={handleFileSelection}
+                                style={{
                                     alignSelf: "center",
                                     marginBottom: 16,
                                     width: 130,
                                     height: 130,
                                     borderRadius: 100,
                                     overflow: "hidden",
-                                }}>
-                                    <Image style={{ height: "100%", width: "100%" }}
-                                        source={{ uri: `data:image/png;base64,${showField.foto}` }}
-                                    />
-                                </TouchableOpacity>
-                            ) : (
-                                <TouchableOpacity
-                                    style={{
-                                        marginBottom: 16,
-                                        backgroundColor: "#ccc",
-                                        width: 130,
-                                        height: 130,
-                                        borderRadius: 100,
-                                        alignSelf: "center",
-                                        alignItems: "center",
-                                        justifyContent: "center"
-                                    }}
-                                    onPress={handleFileSelection}>
-                                    <Text style={{ fontWeight: '700', fontSize: 20 }}>FOTO</Text>
-                                </TouchableOpacity>
-                            )
-                        }
+                                }}
+                            >
+                                <Image
+                                    style={{ height: "100%", width: "100%" }}
+                                    source={{ uri: `data:image/png;base64,${showField.foto}` }}
+                                />
+                            </TouchableOpacity>
+                        ) : (
+                            <Controller
+                                control={control}
+                                name="foto"
+                                defaultValue=""
+                                rules={{ required: true }}
+                                render={() => (
+                                    <>
+                                        <TouchableOpacity
+                                            style={{
+                                                marginBottom: 16,
+                                                backgroundColor: "#ccc",
+                                                width: 130,
+                                                height: 130,
+                                                borderRadius: 100,
+                                                alignSelf: "center",
+                                                alignItems: "center",
+                                                justifyContent: "center"
+                                            }}
+                                            onPress={handleFileSelection}
+                                        >
+                                            <Text style={{ fontWeight: '700', fontSize: 20 }}>FOTO</Text>
+                                        </TouchableOpacity>
+                                        {errors.foto && <Text style={{ textAlign: "center", color: "#000" }}>Precisa ser preenchido.</Text>}
+                                    </>
+                                )}
+                            />
+                        )}
 
                         <View>
-                            {
-                                error ? <Text style={{ alignSelf: "center", fontWeight: "700", color: "red" }}>Email já Cadastrado</Text> : null
-                            }
-
+                            {error ? (
+                                <Text style={{ alignSelf: "center", fontWeight: "700", color: "red" }}>
+                                    Email já cadastrado
+                                </Text>
+                            ) : null}
                         </View>
+
                         <View style={styles.inputContainer}>
                             <Text style={styles.inputLabel}>Nome</Text>
                             <View style={styles.inputWrapper}>
@@ -180,16 +228,31 @@ const SingIng = () => {
                                 {showField.nameBool && (
                                     <Text style={styles.placeholderText}>Gabriela Oliveira</Text>
                                 )}
-                                <TextInput
-                                    placeholderTextColor="#373737"
-                                    style={styles.textInput}
-                                    onFocus={() => handleFieldFocus('name')}
-                                    onBlur={() => handleFieldBlur('name')}
-                                    onChangeText={(e) => handleFieldChange(e, 'name')}
-                                    value={showField.nome}
+                                <Controller
+                                    control={control}
+                                    name="nome"
+                                    defaultValue=""
+                                    rules={{ required: true }}
+                                    render={({ field: { onChange, onBlur, value } }) => (
+                                        <TextInput
+                                            placeholderTextColor="#373737"
+                                            style={styles.textInput}
+                                            onFocus={() => handleFieldFocus('name')}
+                                            onBlur={() => {
+                                                onBlur();
+                                                handleFieldBlur('name');
+                                            }}
+                                            onChangeText={value => {
+                                                onChange(value);
+                                                handleFieldChange(value, 'name');
+                                            }}
+                                            value={value}
+                                        />
+                                    )}
                                 />
                             </View>
                         </View>
+                        {errors.nome && <Text style={{ color: "#000" }}>Precisa ser preenchido.</Text>}
 
                         <View style={styles.inputContainer}>
                             <Text style={styles.inputLabel}>Email</Text>
@@ -198,16 +261,31 @@ const SingIng = () => {
                                 {showField.emailBool && (
                                     <Text style={styles.placeholderText}>usuario132@gmail.com</Text>
                                 )}
-                                <TextInput
-                                    placeholderTextColor="#373737"
-                                    style={styles.textInput}
-                                    onFocus={() => handleFieldFocus('email')}
-                                    onBlur={() => handleFieldBlur('email')}
-                                    onChangeText={(e) => handleFieldChange(e, 'email')}
-                                    value={showField.email}
+                                <Controller
+                                    control={control}
+                                    name="email"
+                                    defaultValue=""
+                                    rules={{ required: true }}
+                                    render={({ field: { onChange, onBlur, value } }) => (
+                                        <TextInput
+                                            placeholderTextColor="#373737"
+                                            style={styles.textInput}
+                                            onFocus={() => handleFieldFocus('email')}
+                                            onBlur={() => {
+                                                onBlur();
+                                                handleFieldBlur('email');
+                                            }}
+                                            onChangeText={value => {
+                                                onChange(value);
+                                                handleFieldChange(value, 'email');
+                                            }}
+                                            value={value}
+                                        />
+                                    )}
                                 />
                             </View>
                         </View>
+                        {errors.email && <Text style={{ color: "#000" }}>Precisa ser preenchido.</Text>}
 
                         <View>
                             <View style={styles.inputContainer}>
@@ -218,14 +296,27 @@ const SingIng = () => {
                                     {showField.senhaBool && (
                                         <Text style={[styles.placeholderText, { bottom: 12 }]}>*********</Text>
                                     )}
-                                    <TextInput
-                                        placeholderTextColor="#000"
-                                        style={styles.textInput}
-                                        secureTextEntry={true}
-                                        onFocus={() => handleFieldFocus('senha')}
-                                        onBlur={() => handleFieldBlur('senha')}
-                                        onChangeText={(e) => handleFieldChange(e, 'senha')}
-                                        value={showField.senha}
+                                    <Controller
+                                        control={control}
+                                        name="senha"
+                                        defaultValue=""
+                                        rules={{ required: true }}
+                                        render={({ field: { onChange, onBlur, value } }) => (
+                                            <TextInput
+                                                placeholderTextColor="#373737"
+                                                style={styles.textInput}
+                                                onFocus={() => handleFieldFocus('senha')}
+                                                onBlur={() => {
+                                                    onBlur();
+                                                    handleFieldBlur('senha');
+                                                }}
+                                                onChangeText={value => {
+                                                    onChange(value);
+                                                    handleFieldChange(value, 'senha');
+                                                }}
+                                                value={value}
+                                            />
+                                        )}
                                     />
                                 </View>
 
@@ -234,17 +325,34 @@ const SingIng = () => {
                                     {showField.confirmarSenhaBool && (
                                         <Text style={[styles.placeholderText, { bottom: 12 }]}>confirmar senha</Text>
                                     )}
-                                    <TextInput
-                                        placeholderTextColor="#000"
-                                        style={styles.textInput}
-                                        secureTextEntry={true}
-                                        onFocus={() => handleFieldFocus('confirmarSenha')}
-                                        onBlur={() => handleFieldBlur('confirmarSenha')}
-                                        onChangeText={(e) => handleFieldChange(e, 'confirmarSenha')}
-                                        value={showField.confirmar}
+                                    <Controller
+                                        control={control}
+                                        name="confirmarSenha"
+                                        defaultValue=""
+                                        rules={{ required: true }}
+                                        render={({ field: { onChange, onBlur, value } }) => (
+                                            <TextInput
+                                                placeholderTextColor="#373737"
+                                                style={styles.textInput}
+                                                onFocus={() => handleFieldFocus('confirmarSenha')}
+                                                onBlur={() => {
+                                                    onBlur();
+                                                    handleFieldBlur('confirmarSenha');
+                                                }}
+                                                onChangeText={value => {
+                                                    onChange(value);
+                                                    handleFieldChange(value, 'confirmarSenha');
+                                                }}
+                                                value={value}
+                                            />
+                                        )}
                                     />
                                 </View>
                             </View>
+
+                            {senhasCorretas == true && showField.senha !== '' ? <Text style={{ color: "#000" }}>Senhas precisam ser iguais.</Text> : null}
+                            {errors.senha && <Text style={{ color: "#000" }}>Precisa ser preenchido.</Text>}
+
                         </View>
 
                         <LinearGradient
@@ -253,7 +361,7 @@ const SingIng = () => {
                             end={{ x: 1, y: 1 }}
                             style={[styles.loginButton, { marginBottom: 10 }]}
                         >
-                            <TouchableOpacity style={styles.loginButton} onPress={() => createUser()}>
+                            <TouchableOpacity style={styles.loginButton} onPress={handleSubmit(onSubmit as never)}>
                                 <Text style={styles.loginButtonText}>Cadastrar</Text>
                                 <Icon name="arrow-right" size={25} color="#fff" />
                             </TouchableOpacity>
@@ -261,10 +369,9 @@ const SingIng = () => {
                     </View>
                 </View>
             </ScrollView>
-
-        </SafeAreaView >
-    )
-}
+        </SafeAreaView>
+    );
+};
 
 const styles = StyleSheet.create({
     safeAreaView: {

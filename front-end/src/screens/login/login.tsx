@@ -6,12 +6,14 @@ import LinearGradient from 'react-native-linear-gradient';
 import SingIng from "./sign-in";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useForm, Controller } from 'react-hook-form';
 import axios from 'axios';
 
 const { height } = Dimensions.get('window')
 
 const Login = () => {
 
+    const { control, handleSubmit, formState: { errors } } = useForm();
 
     const [posicao] = useState(new Animated.Value(3200))
 
@@ -23,8 +25,8 @@ const Login = () => {
         senha: '',
         senhaBool: true
     })
-    
-    const createData = async () => {
+
+    const Login = async () => {
 
         const OptionsRegister = {
             data: { email: showField.email, senha: showField.senha },
@@ -98,6 +100,11 @@ const Login = () => {
         ).start()
     }
 
+    const onSubmit = (data: any) => {
+        setShowField(data);
+        Login();
+    };
+
     return (
         <>
             <Animated.View style={{
@@ -151,16 +158,31 @@ const Login = () => {
                                 {showField.emailBool && (
                                     <Text style={styles.placeholderText}>usuario132@gmail.com</Text>
                                 )}
-                                <TextInput
-                                    placeholderTextColor="#373737"
-                                    style={styles.textInput}
-                                    onFocus={() => handleFieldFocus('email')}
-                                    onBlur={() => handleFieldBlur('email')}
-                                    onChangeText={(e) => handleFieldChange(e, 'email')}
-                                    value={showField.email}
+                                <Controller
+                                    control={control}
+                                    name="email"
+                                    defaultValue=""
+                                    rules={{ required: true }}
+                                    render={({ field: { onChange, onBlur, value } }) => (
+                                        <TextInput
+                                            placeholderTextColor="#373737"
+                                            style={styles.textInput}
+                                            onFocus={() => handleFieldFocus('email')}
+                                            onBlur={() => {
+                                                onBlur();
+                                                handleFieldBlur('email');
+                                            }}
+                                            onChangeText={value => {
+                                                onChange(value);
+                                                handleFieldChange(value, 'email');
+                                            }}
+                                            value={value}
+                                        />
+                                    )}
                                 />
                             </View>
                         </View>
+                        {errors.email && <Text style={{ color: "#000" }}>Precisa ser preenchido.</Text>}
 
                         <View>
                             <View style={styles.inputContainer}>
@@ -170,14 +192,27 @@ const Login = () => {
                                     {showField.senhaBool && (
                                         <Text style={[styles.placeholderText, { bottom: 12 }]}>*********</Text>
                                     )}
-                                    <TextInput
-                                        secureTextEntry={true}
-                                        placeholderTextColor="#000"
-                                        style={styles.textInput}
-                                        onFocus={() => handleFieldFocus('senha')}
-                                        onBlur={() => handleFieldBlur('senha')}
-                                        onChangeText={(e) => handleFieldChange(e, 'senha')}
-                                        value={showField.senha}
+                                    <Controller
+                                        control={control}
+                                        name="senha"
+                                        defaultValue=""
+                                        rules={{ required: true }}
+                                        render={({ field: { onChange, onBlur, value } }) => (
+                                            <TextInput
+                                                placeholderTextColor="#373737"
+                                                style={styles.textInput}
+                                                onFocus={() => handleFieldFocus('senha')}
+                                                onBlur={() => {
+                                                    onBlur();
+                                                    handleFieldBlur('senha');
+                                                }}
+                                                onChangeText={value => {
+                                                    onChange(value);
+                                                    handleFieldChange(value, 'senha');
+                                                }}
+                                                value={value}
+                                            />
+                                        )}
                                     />
                                 </View>
                             </View>
@@ -185,6 +220,7 @@ const Login = () => {
                                 <Text style={{ color: "#161616" }}>Esqueceu sua senha?</Text>
                             </TouchableOpacity>
                         </View>
+                        {errors.senha && <Text style={{ color: "#000" }}>Precisa ser preenchido.</Text>}
 
                         <LinearGradient
                             colors={['#161616', '#333333', '#999999']}
@@ -192,7 +228,7 @@ const Login = () => {
                             end={{ x: 1, y: 1 }}
                             style={styles.loginButton}
                         >
-                            <TouchableOpacity style={styles.loginButton} onPress={() => createData()}>
+                            <TouchableOpacity style={styles.loginButton} onPress={handleSubmit(onSubmit as never)}>
                                 <Text style={styles.loginButtonText}>LOGIN</Text>
                                 <Icon name="arrow-right" size={25} color="#fff" />
                             </TouchableOpacity>
