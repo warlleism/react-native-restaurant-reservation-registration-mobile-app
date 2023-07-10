@@ -1,45 +1,57 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-import React from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { Image, ScrollView, Text, TextInput, TouchableOpacity, View, StyleSheet } from 'react-native';
 import Search from 'react-native-vector-icons/AntDesign';
 import Drink from 'react-native-vector-icons/Entypo';
 
+interface IRestaurante {
+  id: number;
+  nome: string;
+  aberto: string;
+  horarioSem: string;
+  horarioFimSem: string;
+  img1: string;
+  img2: string;
+  img3: string;
+  img4: string;
+  img5: string;
+  descricao: string;
+  capacidade_maxima_reservas: number;
+}
+
+
 function Home() {
 
   const navigation = useNavigation();
+  const [data, setData] = useState<IRestaurante[]>([])
 
-  const data = [
-    {
-      id: 1,
-      image: require('../../../assets/img1.png'),
-      name: 'Delícias do Chef'
-    },
-    {
-      id: 2,
-      image: require('../../../assets/img2.png'),
-      name: 'Restaurante Italiano'
-    },
-    {
-      id: 3,
-      image: require('../../../assets/img3.png'),
-      name: 'Comida Mexicana'
-    },
-    {
-      id: 4,
-      image: require('../../../assets/img4.png'),
-      name: 'Burger Joint'
-    },
-    {
-      id: 5,
-      image: require('../../../assets/img5.png'),
-      name: 'Sushi Bar'
-    },
-    {
-      id: 6,
-      image: require('../../../assets/img2.png'),
-      name: 'Restaurante Francês'
-    }
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const storedToken = await AsyncStorage.getItem('token');
+
+        if (storedToken) {
+          const headers = {
+            Authorization: `Bearer ${storedToken}`,
+          };
+
+          const response = await axios.get(
+            'http://192.168.1.153:8080/todosRestaurantes',
+            { headers }
+          );
+
+          setData(response.data.data)
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
 
   return (
     <ScrollView style={styles.container}>
@@ -64,7 +76,7 @@ function Home() {
       </View>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categories}>
-        
+
         <TouchableOpacity style={styles.categoryButton}>
           <Text style={styles.categoryText}>Gourmet</Text>
         </TouchableOpacity>
@@ -99,13 +111,14 @@ function Home() {
         </View>
 
         <View style={styles.restaurantList}>
-          {data.map(item => (
-            <TouchableOpacity key={item.id} style={styles.restaurantItem} onPress={() => navigation.navigate("detail" as never)}>
-              <Image source={item.image} style={styles.restaurantImage} />
-              <Text style={styles.restaurantName}>{item.name}</Text>
+          {data?.map(item => (
+            <TouchableOpacity key={item?.id} style={styles.restaurantItem} onPress={() => navigation.navigate("detail" as never)}>
+              <Image source={item.img1 as never} style={styles.restaurantImage} />
+              <Text style={styles.restaurantName}>{item?.nome}</Text>
             </TouchableOpacity>
           ))}
         </View>
+
       </View>
     </ScrollView>
   );

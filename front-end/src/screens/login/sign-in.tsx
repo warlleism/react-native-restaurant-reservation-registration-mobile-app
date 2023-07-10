@@ -1,29 +1,21 @@
 import { useState } from "react";
-import { Button, Image, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
-import { Dimensions, SafeAreaView, Text, TextInput, View } from "react-native"
+import { Image, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { SafeAreaView, Text, TextInput, View } from "react-native"
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import User from 'react-native-vector-icons/AntDesign';
 import LinearGradient from 'react-native-linear-gradient';
 import DocumentPicker from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
+import useCreateUser from "../../hooks/createNewUser";
+import { IForm } from "../../interfaces/IForm";
 
-interface IForm {
-    email: string,
-    senha: string,
-    name: string,
-    confirmar: string,
-    foto: string,
-    nameBool: boolean,
-    emailBool: boolean,
-    senhaBool: boolean,
-    confirmarSenhaBool: boolean
-}
+
 const SingIng = () => {
 
     const [showField, setShowField] = useState<IForm>({
         email: "",
         senha: "",
-        name: "",
+        nome: "",
         confirmar: "",
         foto: '',
         nameBool: true,
@@ -31,6 +23,8 @@ const SingIng = () => {
         senhaBool: true,
         confirmarSenhaBool: true
     });
+
+    const { error, createUser } = useCreateUser(showField, setShowField);
 
     const handleFieldFocus = (field: string) => {
         if (field === "email") {
@@ -67,7 +61,7 @@ const SingIng = () => {
                 ...prev,
                 senhaBool: true
             }));
-        } else if (field === "name" && showField.name === "") {
+        } else if (field === "name" && showField.nome === "") {
             setShowField((prev: IForm) => ({
                 ...prev,
                 nameBool: true
@@ -94,7 +88,7 @@ const SingIng = () => {
         } else if (field === "name") {
             setShowField((prev: IForm) => ({
                 ...prev,
-                name: text
+                nome: text
             }));
         } else if (field === "confirmarSenha") {
             setShowField((prev: IForm) => ({
@@ -173,6 +167,12 @@ const SingIng = () => {
                             )
                         }
 
+                        <View>
+                            {
+                                error ? <Text style={{ alignSelf: "center", fontWeight: "700", color: "red" }}>Email já Cadastrado</Text> : null
+                            }
+
+                        </View>
                         <View style={styles.inputContainer}>
                             <Text style={styles.inputLabel}>Nome</Text>
                             <View style={styles.inputWrapper}>
@@ -186,7 +186,7 @@ const SingIng = () => {
                                     onFocus={() => handleFieldFocus('name')}
                                     onBlur={() => handleFieldBlur('name')}
                                     onChangeText={(e) => handleFieldChange(e, 'name')}
-                                    value={showField.name}
+                                    value={showField.nome}
                                 />
                             </View>
                         </View>
@@ -253,7 +253,7 @@ const SingIng = () => {
                             end={{ x: 1, y: 1 }}
                             style={[styles.loginButton, { marginBottom: 10 }]}
                         >
-                            <TouchableOpacity style={styles.loginButton}>
+                            <TouchableOpacity style={styles.loginButton} onPress={() => createUser()}>
                                 <Text style={styles.loginButtonText}>Cadastrar</Text>
                                 <Icon name="arrow-right" size={25} color="#fff" />
                             </TouchableOpacity>

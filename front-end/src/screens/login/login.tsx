@@ -5,10 +5,13 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import LinearGradient from 'react-native-linear-gradient';
 import SingIng from "./sign-in";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 const { height } = Dimensions.get('window')
 
 const Login = () => {
+
 
     const [posicao] = useState(new Animated.Value(3200))
 
@@ -20,6 +23,33 @@ const Login = () => {
         senha: '',
         senhaBool: true
     })
+    
+    const createData = async () => {
+
+        const OptionsRegister = {
+            data: { email: showField.email, senha: showField.senha },
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        };
+
+        try {
+            const response = await axios('http://192.168.1.153:8080/login', OptionsRegister);
+            const data = response.data;
+            console.log(data)
+            if (response.status === 200) {
+                await AsyncStorage.setItem('token', data.token);
+                console.log('Token definido com sucesso!');
+                navigation.navigate('home' as never);
+            } else {
+                console.log('Requisição não retornou status 200.');
+            }
+        } catch (error) {
+            console.log('Erro na requisição:', error, 'Email ou senha incorretos');
+        }
+    };
+
 
     const handleFieldFocus = (field: string) => {
         if (field === "email") {
@@ -110,7 +140,7 @@ const Login = () => {
                 <View style={styles.container}>
                     <View>
                         <Text style={styles.loginText}>Login</Text>
-                        <Text style={styles.loginSubtitle}>Faça login para continuar.</Text>
+                        <Text style={styles.loginSubtitle}>Façaa login para continuar.</Text>
                     </View>
 
                     <View>
@@ -162,7 +192,7 @@ const Login = () => {
                             end={{ x: 1, y: 1 }}
                             style={styles.loginButton}
                         >
-                            <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate("home" as never)}>
+                            <TouchableOpacity style={styles.loginButton} onPress={() => createData()}>
                                 <Text style={styles.loginButtonText}>LOGIN</Text>
                                 <Icon name="arrow-right" size={25} color="#fff" />
                             </TouchableOpacity>

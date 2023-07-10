@@ -7,7 +7,6 @@ const ReadAllRestaurantes = async (req, res) => {
     
     const response = await restaurantes.findAll();
     
-    
     return res.status(200).send({data: response});
 
   } catch (err) {
