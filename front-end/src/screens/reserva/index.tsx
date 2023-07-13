@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react"
 import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Picker } from '@react-native-picker/picker';
 import DatePicker from 'react-native-date-picker'
-import { AppContext } from "../../context/Provider";
+import { AppContext, IData } from "../../context/Provider";
 import { useNavigation } from "@react-navigation/native";
 import Arrow from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -34,7 +34,7 @@ const Reserva = () => {
     const [mesas, setMesas] = useState([])
     const [horariosSem, setHorarioSem] = useState<IHorario[]>([{ horario: '', select: false },]);
     const [horariosFim, setHorariosFim] = useState<IHorario[]>([{ horario: '', select: false }]);
-    const [formulario, setFormulario] = useState<IFormulario[]>([
+    const [formulario, setFormulario] = useState<IFormulario[] | any>([
         {
             id_usuario: 0,
             id_mesa: 0,
@@ -308,7 +308,7 @@ const Reserva = () => {
                                 setFormulario({ ...formulario, id_mesa: itemValue })
                             }>
                             {
-                                mesas.map((e) => {
+                                mesas.map((e: any) => {
                                     return (
                                         <Picker.Item key={e?.id} style={{ fontSize: 15, color: "#fff" }} label={`Número: ${e?.numero}: Descrição: ${e?.descricao}`} value={e?.id} />
                                     )

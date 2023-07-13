@@ -16,17 +16,17 @@ export interface IData {
 }
 
 interface ContextProps {
-    data: IData[];
-    setData: React.Dispatch<React.SetStateAction<IData[]>>;
+    data: IData;
+    setData: React.Dispatch<React.SetStateAction<IData>>;
 }
 
 export const AppContext = createContext<ContextProps>({
-    data: [],
-    setData: () => { },
+    data: {} as IData,
+    setData: () => { }
 });
 
 export const AppProvider: React.FC = ({ children }: any) => {
-    const [data, setData] = useState<IData[]>([]);
+    const [data, setData] = useState<IData>({} as IData);
 
     return (
         <AppContext.Provider value={{ data, setData }}>

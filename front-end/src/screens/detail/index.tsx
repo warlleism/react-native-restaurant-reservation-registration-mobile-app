@@ -33,16 +33,16 @@ const Detail = () => {
             <Image source={{ uri: `data:image/jpg;base64,${data?.img1}` }} style={styles.image} />
           )}
           <View style={styles.thumbnailContainer}>
-            <TouchableOpacity onPress={() => setCenterImg(data?.img1)} style={styles.thumbnail}>
+            <TouchableOpacity onPress={() => setCenterImg(data?.img1 as never)} style={styles.thumbnail}>
               <Image source={{ uri: `data:image/jpg;base64,${data?.img1}` }} style={styles.thumbnailImage} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setCenterImg(data?.img2)} style={styles.thumbnail}>
+            <TouchableOpacity onPress={() => setCenterImg(data?.img2 as never)} style={styles.thumbnail}>
               <Image source={{ uri: `data:image/jpg;base64,${data?.img2}` }} style={styles.thumbnailImage} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setCenterImg(data?.img3)} style={styles.thumbnail}>
+            <TouchableOpacity onPress={() => setCenterImg(data?.img3 as never)} style={styles.thumbnail}>
               <Image source={{ uri: `data:image/jpg;base64,${data?.img3}` }} style={styles.thumbnailImage} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setCenterImg(data?.img4)} style={styles.thumbnail}>
+            <TouchableOpacity onPress={() => setCenterImg(data?.img4 as never)} style={styles.thumbnail}>
               <Image source={{ uri: `data:image/jpg;base64,${data?.img4}` }} style={styles.thumbnailImage} />
             </TouchableOpacity>
           </View>
