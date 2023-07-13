@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react';
-import { Image, ScrollView, Text, TextInput, TouchableOpacity, View, StyleSheet } from 'react-native';
+import { Image, ScrollView, Text, TextInput, TouchableOpacity, View, StyleSheet, Dimensions } from 'react-native';
 import Search from 'react-native-vector-icons/AntDesign';
 import Drink from 'react-native-vector-icons/Entypo';
 import { AppContext, IData } from '../../context/Provider';
@@ -14,6 +14,8 @@ interface IUser {
   email: string;
   senha: string;
 }
+
+const { width } = Dimensions.get('window')
 
 function Home() {
 
@@ -28,7 +30,6 @@ function Home() {
     const fetchData = async () => {
       try {
         const response = await axios.get('http://192.168.1.153:8080/todosRestaurantes');
-        console.log(response.data.data)
         setItens(response.data.data)
       } catch (error) {
         console.error(error);
@@ -182,7 +183,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "#929292",
-    fontSize: 26,
+    fontSize: width <= 320 ? 22 : 26,
     letterSpacing: -2,
     fontWeight: '700'
   },

@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     width: '90%',
-    height: height - 700,
+    height: 100,
     alignItems: 'center',
     alignSelf: 'center',
     justifyContent: 'center',

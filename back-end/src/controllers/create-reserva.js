@@ -1,8 +1,11 @@
 const Reservas = require("../model/reservas");
 
-const CreateUser = async (req, res) => {
+const CreateReserva = async (req, res) => {
+
   var { id_usuario, id_mesa, id_restaurante, data, hora, quantidade_pessoas } =
     req.body;
+
+  console.log(id_usuario);
 
   try {
     const cadastrar = await Reservas.create({
@@ -11,7 +14,6 @@ const CreateUser = async (req, res) => {
       id_restaurante,
       data,
       hora,
-      data,
       quantidade_pessoas,
     });
 
@@ -27,4 +29,4 @@ const CreateUser = async (req, res) => {
   }
 };
 
-module.exports = CreateUser;
+module.exports = CreateReserva;

@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from "react"
-import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Picker } from '@react-native-picker/picker';
 import DatePicker from 'react-native-date-picker'
-import { AppContext, IData } from "../../context/Provider";
+import { AppContext } from "../../context/Provider";
 import { useNavigation } from "@react-navigation/native";
 import Arrow from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -39,17 +39,60 @@ const Reserva = () => {
             id_usuario: 0,
             id_mesa: 0,
             id_restaurante: 0,
-            data: '22-12-2023',
+            data: '',
             hora: '',
             quantidade_pessoas: 0
         }
     ])
 
+    const handlerSubmit = async () => {
+
+        const isEmptyOrZero = Object.values(formulario).some((campo) => {
+            return campo === '' || campo === 0;
+        });
+
+        if (isEmptyOrZero) {
+            Alert.alert('Todos campos devem ser preenchidos')
+            console.log('Preencha todos os campos do formulário.');
+            return;
+        }
+
+        const storedToken = await AsyncStorage.getItem('dados');
+        if (storedToken !== null) {
+            const parsedToken = JSON.parse(storedToken);
+            const token = parsedToken.token;
+
+            const OptionsRegister = {
+                data: formulario,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+            };
+
+            try {
+                const response = await axios('http://192.168.1.153:8080/novaReserva', OptionsRegister);
+                const data = response.data;
+                if (response.status === 200) {
+                    Alert.alert('Reserva feita com sucesso!')
+                    console.log(data.sucess);
+                } else {
+                    console.log('Requisição não retornou status 200.');
+                }
+            } catch (error) {
+                Alert.alert('Reserva já solicitada. Desculpa!')
+                console.log('Erro na requisição:', error, error);
+            }
+        }
+    };
+
+
+
 
     useEffect(() => {
 
         const fetchData = async () => {
-
             const OptionsRegister = {
                 id: data.id,
                 method: 'POST',
@@ -57,15 +100,13 @@ const Reserva = () => {
                     'Content-Type': 'application/json',
                 },
             };
-
             try {
                 const response = await axios.post('http://192.168.1.153:8080/mesa', OptionsRegister);
                 setMesas(response.data.data)
             } catch (error) {
                 console.error(error);
             }
-        }
-
+        };
         const filterSem = data?.horarioSem.split(',')
         const horariosSemObjetos = filterSem.map(horario => ({
             horario,
@@ -78,7 +119,6 @@ const Reserva = () => {
             select: false,
         }));
         setHorarioSem(horariosObjetos);
-
         const setDefaultValue = async () => {
             try {
                 const storedToken = await AsyncStorage.getItem('dados');
@@ -91,7 +131,7 @@ const Reserva = () => {
                         id_usuario: id,
                         id_mesa: 0,
                         id_restaurante: data.id,
-                        data: '22-12-2023',
+                        data: '',
                         hora: "",
                         quantidade_pessoas: 0
                     })
@@ -101,7 +141,6 @@ const Reserva = () => {
                 console.error(error);
             }
         };
-
         fetchData()
         setDefaultValue();
     }, [])
@@ -151,9 +190,16 @@ const Reserva = () => {
         }
     };
 
+    const handlerData = (data: Date) => {
+        const dia = data.getDate().toString().padStart(2, '0');
+        const mes = (data.getMonth() + 1).toString().padStart(2, '0');
+        const ano = data.getFullYear().toString();
+        const dataFormatada = `${dia}-${mes}-${ano}`;
+        setFormulario({ ...formulario, data: dataFormatada })
+    }
+
     return (
         <View style={{ flex: 1, height: "100%" }}>
-
             <TouchableOpacity style={styles.header} onPress={() => navigation.navigate("detail" as never)}>
                 <Arrow name="arrowleft" size={25} color="#fff" style={{ zIndex: 10 }} />
             </TouchableOpacity>
@@ -193,13 +239,13 @@ const Reserva = () => {
                         height: 70,
                         marginBottom: 46
                     }}>
-                        <Text style={{ color: '#000', marginBottom: 16 }}>Dia</Text>
+                        <Text style={{ color: '#000', marginBottom: 6, fontWeight: "700" }}>Dia</Text>
                         <Picker
                             style={{
                                 width: "100%",
                                 height: "100%",
                                 borderRadius: 10,
-                                backgroundColor: "#000000b8",
+                                backgroundColor: "#151515",
                                 justifyContent: "center",
                             }}
                             selectedValue={selectedDia}
@@ -216,12 +262,12 @@ const Reserva = () => {
                         height: 70,
                         marginBottom: 46
                     }}>
-                        <Text style={{ color: '#000', marginBottom: 16 }}>Data</Text>
+                        <Text style={{ color: '#000', marginBottom: 6, fontWeight: "700" }}>Data</Text>
                         <TouchableOpacity onPress={() => setOpen(true)}
                             style={{
                                 width: "100%",
                                 height: "100%",
-                                backgroundColor: "#000000b8",
+                                backgroundColor: "#151515",
                                 justifyContent: "center",
                             }}>
 
@@ -241,6 +287,7 @@ const Reserva = () => {
                                 open={open}
                                 date={date}
                                 onConfirm={(date) => {
+                                    handlerData(date)
                                     setOpen(false)
                                     setDate(date)
                                 }}
@@ -266,12 +313,12 @@ const Reserva = () => {
                         height: 70,
                         marginBottom: 46
                     }}>
-                        <Text style={{ color: '#000', marginBottom: 16 }}>Cadeiras</Text>
+                        <Text style={{ color: '#000', marginBottom: 6, fontWeight: "700" }}>Cadeiras</Text>
                         <Picker
                             style={{
                                 width: "100%",
                                 height: "100%",
-                                backgroundColor: "#000000b8",
+                                backgroundColor: "#151515",
                                 justifyContent: "center",
                             }}
                             selectedValue={formulario.quantidade_pessoas}
@@ -294,13 +341,13 @@ const Reserva = () => {
                         height: 70,
                         marginBottom: 46
                     }}>
-                        <Text style={{ color: '#000', marginBottom: 16 }}>Mesa</Text>
+                        <Text style={{ color: '#000', marginBottom: 6, fontWeight: "700" }}>Mesa</Text>
                         <Picker
                             style={{
                                 width: "100%",
                                 height: "100%",
                                 borderRadius: 10,
-                                backgroundColor: "#000000b8",
+                                backgroundColor: "#151515",
                                 justifyContent: "center",
                             }}
                             selectedValue={formulario?.id_mesa}
@@ -327,7 +374,7 @@ const Reserva = () => {
                             <View style={{
                                 flexDirection: "row",
                                 width: '100%',
-                                justifyContent: "space-between",
+                                gap: 3,
                                 alignSelf: "center",
                                 flexWrap: "wrap",
                                 marginTop: 20
@@ -359,8 +406,8 @@ const Reserva = () => {
                         <View style={{ flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
                             <Text style={{ color: "#000", fontWeight: '600', fontSize: 20, width: "100%" }}>Sab / Dom</Text>
                             <View style={{
-                                flexDirection: "row",
                                 width: '100%',
+                                flexDirection: "row",
                                 justifyContent: "space-between",
                                 alignSelf: "center",
                                 flexWrap: "wrap",
@@ -391,7 +438,7 @@ const Reserva = () => {
                         </View>
                 }
 
-                <TouchableOpacity style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.buttonContainer} onPress={() => handlerSubmit()}>
                     <Text style={styles.buttonText}>Reservar</Text>
                 </TouchableOpacity>
 
@@ -427,7 +474,7 @@ const styles = StyleSheet.create({
         left: 10,
         width: 40,
         height: 40,
-        backgroundColor: "#000000b8",
+        backgroundColor: "#00000061",
         borderRadius: 100,
         marginBottom: 24,
         position: "absolute",
