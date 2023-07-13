@@ -12,7 +12,6 @@ class Restaurantes extends Model {
         img2: DataTypes.STRING,
         img3: DataTypes.STRING,
         img4: DataTypes.STRING,
-        img5: DataTypes.STRING,
         descricao: DataTypes.STRING,
         capacidade_maxima_reservas: DataTypes.INTEGER,
       },

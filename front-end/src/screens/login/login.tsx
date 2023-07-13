@@ -31,7 +31,7 @@ const Login = () => {
         async function getLocalData() {
             const storedToken = await AsyncStorage.getItem('dados');
             if (storedToken) {
-                navigation.navigate('/' as never)
+                navigation.navigate('home' as never)
             }
         }
         getLocalData()

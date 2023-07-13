@@ -1,25 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Image, ScrollView, Text, TextInput, TouchableOpacity, View, StyleSheet } from 'react-native';
 import Search from 'react-native-vector-icons/AntDesign';
 import Drink from 'react-native-vector-icons/Entypo';
-
-interface IRestaurante {
-  id: number;
-  nome: string;
-  aberto: string;
-  horarioSem: string;
-  horarioFimSem: string;
-  img1: string;
-  img2: string;
-  img3: string;
-  img4: string;
-  img5: string;
-  descricao: string;
-  capacidade_maxima_reservas: number;
-}
+import { AppContext, IData } from '../../context/Provider';
 
 interface IUser {
   id: number;
@@ -31,21 +17,19 @@ interface IUser {
 
 function Home() {
 
+  const { setData } = useContext(AppContext);
   const navigation = useNavigation();
-  const [data, setData] = useState<IRestaurante[]>([])
-  const [user, setUser] = useState<IUser[]>([])
+  const [itens, setItens] = useState<IData[]>([])
+  const [user, setUser] = useState<IUser>()
   const [icon, setIcon] = useState(false)
 
   useEffect(() => {
 
     const fetchData = async () => {
       try {
-
-        const response = await axios.get(
-          'http://192.168.1.153:8080/todosRestaurantes'
-        );
-
-        setData(response.data.data)
+        const response = await axios.get('http://192.168.1.153:8080/todosRestaurantes');
+        console.log(response.data.data)
+        setItens(response.data.data)
       } catch (error) {
         console.error(error);
       }
@@ -54,22 +38,17 @@ function Home() {
     const fetchUser = async () => {
       try {
         const storedToken = await AsyncStorage.getItem('dados');
-
         if (storedToken !== null) {
           const parsedToken = JSON.parse(storedToken);
-
           const data = { id: parsedToken.id };
-
           const headers = {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${parsedToken.token}`,
           };
-
           const response = await axios.post('http://192.168.1.153:8080/umUsuario', data, { headers });
           if (response.data.data === null) {
             return setIcon(true)
           }
-
           setIcon(false)
           return setUser(response.data.data);
         }
@@ -85,8 +64,6 @@ function Home() {
 
   return (
     <ScrollView style={styles.container}>
-
-
       <View style={styles.header}>
         <View>
           <Text style={styles.title}>Encontre os Melhores</Text>
@@ -175,9 +152,12 @@ function Home() {
         </View>
 
         <View style={styles.restaurantList}>
-          {data?.map(item => (
-            <TouchableOpacity key={item?.id} style={styles.restaurantItem} onPress={() => navigation.navigate("detail" as never)}>
-              <Image source={item.img1 as never} style={styles.restaurantImage} />
+          {itens?.map((item: IData) => (
+            <TouchableOpacity key={item?.id} style={styles.restaurantItem} onPress={() => {
+              setData(item as never)
+              navigation.navigate("detail" as never)
+            }}>
+              <Image source={{ uri: `data:image/png;base64,${item?.img1}` }} style={styles.restaurantImage} />
               <Text style={styles.restaurantName}>{item?.nome}</Text>
             </TouchableOpacity>
           ))}

@@ -1,80 +1,66 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
-import { Dimensions, Image, ScrollView, Text, TouchableOpacity, View, ImageSourcePropType, StyleSheet } from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
+import { Dimensions, Image, ScrollView, Text, TouchableOpacity, View, ImageSourcePropType, StyleSheet, Button } from 'react-native';
 import Arrow from 'react-native-vector-icons/AntDesign';
+import { AppContext } from '../../context/Provider';
 
 const { height } = Dimensions.get('window');
 
 const Detail = () => {
+
   const navigation = useNavigation();
-
-  const [centerImg, setCenterImg] = useState<ImageSourcePropType | undefined>(undefined);
-
-  const data = [
-    {
-      id: 1,
-      name: 'Cantinho Gourmet',
-      img1: require('../../../assets/img1.png'),
-      img2: require('../../../assets/img2.png'),
-      img3: require('../../../assets/img3.png'),
-      img4: require('../../../assets/img4.png'),
-    },
-  ];
-
-  useEffect(() => {
-    setCenterImg(require('../../../assets/img1.png'));
-  }, []);
+  const [centerImg, setCenterImg] = useState();
+  const { data, setData } = useContext(AppContext);
 
   return (
     <View style={{ height: '100%', padding: 15 }}>
-      <TouchableOpacity
-        style={styles.buttonContainer}
+
+      <ScrollView showsVerticalScrollIndicator={false}>
+
+        <View style={styles.container}>
+
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => navigation.navigate("home" as never)}>
+              <Arrow name="arrowleft" size={30} color="#33363F" />
+            </TouchableOpacity>
+            <Text style={styles.title}>{data?.nome}</Text>
+            <View />
+          </View>
+
+          {centerImg ? (
+            <Image source={{ uri: `data:image/jpg;base64,${centerImg}` }} style={styles.image} />
+          ) : (
+            <Image source={{ uri: `data:image/jpg;base64,${data?.img1}` }} style={styles.image} />
+          )}
+          <View style={styles.thumbnailContainer}>
+            <TouchableOpacity onPress={() => setCenterImg(data?.img1)} style={styles.thumbnail}>
+              <Image source={{ uri: `data:image/jpg;base64,${data?.img1}` }} style={styles.thumbnailImage} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setCenterImg(data?.img2)} style={styles.thumbnail}>
+              <Image source={{ uri: `data:image/jpg;base64,${data?.img2}` }} style={styles.thumbnailImage} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setCenterImg(data?.img3)} style={styles.thumbnail}>
+              <Image source={{ uri: `data:image/jpg;base64,${data?.img3}` }} style={styles.thumbnailImage} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setCenterImg(data?.img4)} style={styles.thumbnail}>
+              <Image source={{ uri: `data:image/jpg;base64,${data?.img4}` }} style={styles.thumbnailImage} />
+            </TouchableOpacity>
+          </View>
+
+          <View>
+            <Text style={styles.title}>{data?.nome}</Text>
+            <Text style={styles.description}>
+              {data?.descricao}
+            </Text>
+          </View>
+        </View>
+      </ScrollView>
+
+      <TouchableOpacity style={styles.buttonContainer}
+        onPress={() => navigation.navigate('reservas' as never)}
       >
         <Text style={styles.buttonText}>Reservar</Text>
       </TouchableOpacity>
-
-      <ScrollView>
-        <Text>{}</Text>
-        {data.map((e) => {
-          return (
-            <View key={e.id} style={styles.container}>
-              <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigation.navigate("/" as never)}>
-                  <Arrow name="arrowleft" size={30} color="#33363F" />
-                </TouchableOpacity>
-                <Text style={styles.title}>{e.name}</Text>
-                <View />
-              </View>
-              {centerImg ? (
-                <Image source={centerImg} style={styles.image} />
-              ) : (
-                <Image source={e.img1} style={styles.image} />
-              )}
-              <View style={styles.thumbnailContainer}>
-                <TouchableOpacity onPress={() => setCenterImg(e.img1)} style={styles.thumbnail}>
-                  <Image source={e.img1} style={styles.thumbnailImage} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => setCenterImg(e.img2)} style={styles.thumbnail}>
-                  <Image source={e.img2} style={styles.thumbnailImage} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => setCenterImg(e.img3)} style={styles.thumbnail}>
-                  <Image source={e.img3} style={styles.thumbnailImage} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => setCenterImg(e.img4)} style={styles.thumbnail}>
-                  <Image source={e.img4} style={styles.thumbnailImage} />
-                </TouchableOpacity>
-              </View>
-
-              <View>
-                <Text style={styles.title}>{e.name}</Text>
-                <Text style={styles.description}>
-                  It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here'.
-                </Text>
-              </View>
-            </View>
-          );
-        })}
-      </ScrollView>
     </View>
   );
 };
@@ -82,6 +68,7 @@ const Detail = () => {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
+    height: "100%",
   },
   header: {
     flexDirection: 'row',
@@ -90,7 +77,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   title: {
-    fontSize: 28,
+    fontSize: 20,
     letterSpacing: -1,
     color: '#000000',
     fontWeight: '600',
@@ -122,10 +109,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
     justifyContent: 'center',
-    position: 'absolute',
-    bottom: 20,
     backgroundColor: '#151515',
-    zIndex: 2,
     borderRadius: 30,
   },
   buttonText: {
@@ -136,6 +120,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 14,
+    marginBottom: 20,
     color: '#000',
   },
 });
