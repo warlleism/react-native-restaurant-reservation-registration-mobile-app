@@ -73,3 +73,16 @@ export const LoginButtonText = styled.Text`
   margin-right: 5px;
 `;
 
+export const MenuItem = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+`;
+
+export const MenuText = styled.Text`
+  font-weight: 600;
+  color: #0F0F0F;
+  font-size: 15px;
+`;
+
+

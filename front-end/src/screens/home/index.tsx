@@ -17,6 +17,7 @@ import {
 import Search from "react-native-vector-icons/AntDesign";
 import Drink from "react-native-vector-icons/Entypo";
 import { AppContext, IData } from "../../context/Provider";
+import Menu from "../../components/menu";
 
 interface IUser {
   id: number;
@@ -74,162 +75,173 @@ function Home() {
         console.error(error);
       }
     };
-
     fetchUser();
     fetchData();
   }, []);
 
+  const [showMenu, setShowMenu] = useState<boolean>(false);
+
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.title}>Encontre os Melhores</Text>
-          <Text style={[styles.title, { color: "#000" }]}>
-            Restaurantes da sua Cidade
-          </Text>
+    <>
+      <Menu
+        value={showMenu}
+        setValue={setShowMenu}
+        img={user?.foto}
+        nome={user?.nome}
+      />
+      <ScrollView style={styles.container}>
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.title}>Encontre os Melhores</Text>
+            <Text style={[styles.title, { color: "#000" }]}>
+              Restaurantes da sua Cidade
+            </Text>
+          </View>
+          {icon ? (
+            <TouchableOpacity
+              onPress={() => setShowMenu(!showMenu)}
+              style={{
+                width: 50,
+                height: 50,
+                borderRadius: 100,
+                borderWidth: 2,
+                justifyContent: "center",
+                alignItems: "center",
+                borderColor: "#151515",
+              }}
+            >
+              <Image
+                source={{ uri: `data:image/png;base64,${user?.foto}` }}
+                style={styles.profileImage}
+              />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={() => navigation.navigate("/" as never)}
+              style={{
+                width: 50,
+                height: 50,
+                borderRadius: 100,
+                borderWidth: 2,
+                justifyContent: "center",
+                alignItems: "center",
+                borderColor: "#151515",
+              }}
+            >
+              <Search name="user" size={30} color={"#000"} />
+            </TouchableOpacity>
+          )}
         </View>
-        {icon ? (
-          <TouchableOpacity
-            onPress={() => navigation.navigate("reservas" as never)}
-            style={{
-              width: 50,
-              height: 50,
-              borderRadius: 100,
-              borderWidth: 2,
-              justifyContent: "center",
-              alignItems: "center",
-              borderColor: "#151515",
-            }}
-          >
-            <Image
-              source={{ uri: `data:image/png;base64,${user?.foto}` }}
-              style={styles.profileImage}
-            />
+
+        <View style={styles.searchBar}>
+          <Search
+            name="search1"
+            size={30}
+            color={"#525252"}
+            style={styles.searchIcon}
+          />
+          <TextInput
+            placeholder="Procurar Restaurante..."
+            placeholderTextColor={"#525252"}
+            style={styles.searchInput}
+          />
+          <Drink
+            name="drink"
+            size={30}
+            color={"#525252"}
+            style={styles.drinkIcon}
+          />
+        </View>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.categories}
+        >
+          <TouchableOpacity style={styles.categoryButton}>
+            <Text style={styles.categoryText}>Gourmet</Text>
           </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            onPress={() => navigation.navigate("/" as never)}
-            style={{
-              width: 50,
-              height: 50,
-              borderRadius: 100,
-              borderWidth: 2,
-              justifyContent: "center",
-              alignItems: "center",
-              borderColor: "#151515",
-            }}
-          >
-            <Search name="user" size={30} color={"#000"} />
+
+          <TouchableOpacity style={styles.categoryButton}>
+            <Text style={styles.categoryText}>Japonês</Text>
           </TouchableOpacity>
-        )}
-      </View>
 
-      <View style={styles.searchBar}>
-        <Search
-          name="search1"
-          size={30}
-          color={"#525252"}
-          style={styles.searchIcon}
-        />
-        <TextInput
-          placeholder="Procurar Restaurante..."
-          placeholderTextColor={"#525252"}
-          style={styles.searchInput}
-        />
-        <Drink
-          name="drink"
-          size={30}
-          color={"#525252"}
-          style={styles.drinkIcon}
-        />
-      </View>
+          <TouchableOpacity style={styles.categoryButton}>
+            <Text style={styles.categoryText}>Italiano</Text>
+          </TouchableOpacity>
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.categories}
-      >
-        <TouchableOpacity style={styles.categoryButton}>
-          <Text style={styles.categoryText}>Gourmet</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.categoryButton}>
+            <Text style={styles.categoryText}>Fast Food</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.categoryButton}>
-          <Text style={styles.categoryText}>Japonês</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.categoryButton}>
+            <Text style={styles.categoryText}>Petiscos</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.categoryButton}>
-          <Text style={styles.categoryText}>Italiano</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.categoryButton}>
+            <Text style={styles.categoryText}>Bebidas</Text>
+          </TouchableOpacity>
+        </ScrollView>
 
-        <TouchableOpacity style={styles.categoryButton}>
-          <Text style={styles.categoryText}>Fast Food</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.categoryButton}>
-          <Text style={styles.categoryText}>Petiscos</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.categoryButton}>
-          <Text style={styles.categoryText}>Bebidas</Text>
-        </TouchableOpacity>
+        <View style={styles.restaurantContainer}>
+          <View style={styles.restaurantHeader}>
+            <Text style={styles.restaurantHeaderText}>Restaurantes</Text>
+            <TouchableOpacity>
+              <Text style={styles.viewMoreText}>VER MAIS</Text>
+            </TouchableOpacity>
+          </View>
+          {itens && itens.length > 0 ? (
+            <View style={styles.restaurantList}>
+              {itens.map((item: IData) => (
+                <TouchableOpacity
+                  key={item.id}
+                  style={styles.restaurantItem}
+                  onPress={() => {
+                    setData(item as never);
+                    navigation.navigate("detail" as never);
+                  }}
+                >
+                  <Image
+                    source={{ uri: `data:image/png;base64,${item.img1}` }}
+                    style={styles.restaurantImage}
+                  />
+                  <Text style={styles.restaurantName}>{item.nome}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          ) : (
+            <View
+              style={{
+                flex: 1,
+                width: "100%",
+                flexWrap: "wrap",
+                flexDirection: "row",
+                justifyContent: "center",
+              }}
+            >
+              {Array.from({ length: 6 }).map((_, index) => (
+                <View
+                  key={index}
+                  style={{
+                    width: "48%",
+                    height: 150,
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    margin: "1%",
+                  }}
+                >
+                  <ShimmerPlaceHolder
+                    style={{ width: "100%", height: "75%" }}
+                  />
+                  <ShimmerPlaceHolder style={{ width: "70%", height: "15%" }} />
+                </View>
+              ))}
+            </View>
+          )}
+        </View>
       </ScrollView>
-
-      <View style={styles.restaurantContainer}>
-        <View style={styles.restaurantHeader}>
-          <Text style={styles.restaurantHeaderText}>Restaurantes</Text>
-          <TouchableOpacity>
-            <Text style={styles.viewMoreText}>VER MAIS</Text>
-          </TouchableOpacity>
-        </View>
-        {itens && itens.length > 0 ? (
-          <View style={styles.restaurantList}>
-            {itens.map((item: IData) => (
-              <TouchableOpacity
-                key={item.id}
-                style={styles.restaurantItem}
-                onPress={() => {
-                  setData(item as never);
-                  navigation.navigate("detail" as never);
-                }}
-              >
-                <Image
-                  source={{ uri: `data:image/png;base64,${item.img1}` }}
-                  style={styles.restaurantImage}
-                />
-                <Text style={styles.restaurantName}>{item.nome}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        ) : (
-          <View
-            style={{
-              flex: 1,
-              width: "100%",
-              flexWrap: 'wrap',
-              flexDirection: "row",
-              justifyContent: "center",
-            }}
-          >
-            {Array.from({ length: 6 }).map((_, index) => (
-              <View
-                key={index}
-                style={{
-                  width: "48%",
-                  height: 150,
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  margin: "1%",
-                }}
-              >
-                <ShimmerPlaceHolder style={{ width: "100%", height: "75%" }} />
-                <ShimmerPlaceHolder style={{ width: "70%", height: "15%" }} />
-              </View>
-            ))}
-          </View>
-        )}
-      </View>
-    </ScrollView>
+    </>
   );
 }
 
