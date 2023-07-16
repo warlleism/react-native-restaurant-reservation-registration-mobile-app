@@ -4,6 +4,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IForm } from '../interfaces/IForm';
 
+  //Custom hook responsável por cadastrar um novo usuário
+
 const useCreateUser = (showField: IForm, setShowField: React.Dispatch<React.SetStateAction<IForm>>) => {
   const [error, setError] = useState<boolean>(false);
   const navigation = useNavigation();
