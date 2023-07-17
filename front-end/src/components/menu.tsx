@@ -98,7 +98,7 @@ const Menu: React.FC<IProps> = ({ value, setValue, img, nome }) => {
                   style={styles.profileImage}
                 />
               </View>
-              <View style={styles.userInfo}>
+              <View>
                 <Text style={styles.userName}>{nome}</Text>
               </View>
             </View>

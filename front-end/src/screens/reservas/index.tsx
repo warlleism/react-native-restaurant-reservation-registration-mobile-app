@@ -1,12 +1,14 @@
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { useState } from "react";
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Dimensions, Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native";
 import Arrow from "react-native-vector-icons/AntDesign";
 import { ActivityIndicator } from "react-native";
 import { InfoText, ViewStyledReservas } from "../../styled/styleds";
 import useFetchReservas from "../../hooks/getAllReservas";
+
+const { width } = Dimensions.get("window");
 
 const Reservas = () => {
   const navigation = useNavigation();
@@ -116,7 +118,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   scrollView: {
-    padding: 20,
+    padding: width <= 320 ? 10 : 20,
     backgroundColor: "#fff",
   },
   headerContainer: {
@@ -164,7 +166,7 @@ const styles = StyleSheet.create({
   },
   restaurantName: {
     color: "#000000bf",
-    fontSize: 18,
+    fontSize: width <= 320 ? 13 : 18,
     fontWeight: "800",
     letterSpacing: -1,
   },
